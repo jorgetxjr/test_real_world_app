@@ -1,0 +1,15 @@
+{
+  "newUser":{
+    "firstName":"João",
+    "lastName":"da Silva",
+    "userName":"jsilva"
+  },
+  "correctUser":{
+    "userName":"Heath93"
+  },
+  "wrongUser":{
+    "userName":"potato",
+    "password":"potato"
+  },
+  "allPassword":"s3cret"
+}
