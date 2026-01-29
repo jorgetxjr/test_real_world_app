@@ -8,7 +8,7 @@ class LoginPage
             rememberMeBox:'[name="remember"]',
             singInButton:'[data-test="signin-submit"]',
             newUserLink:'[data-test="signup"]',
-            invalidLogin:'MuiAlert-message css-1pxa9xg-MuiAlert-message'
+            invalidLogin:'[data-test="signin-error"]'
         }
         return selectors
     }

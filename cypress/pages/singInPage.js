@@ -24,14 +24,15 @@ class SingInPage
 
     isInCorrectPage()
     {
-        cy.location("pathname").should("equal","localhost:3000/signup")
+        cy.location("pathname").should("equal","/signup")
     }
 
     correctFillForm()
     {
-        cy.get(this.selectorsList().confirmButton).should('be.enable')//not sure
+        //cy.get(this.selectorsList().confirmButton).should('be.enable')//really not!
         cy.get(this.selectorsList().confirmButton).click()
-        //TODO: APÓS CLICAR, O QUE ACONTECE???
+        //APÓS CLICAR, O QUE ACONTECE??? volta para a página inicial, com uma URL diferente
+        cy.location("pathname").should("equal","/signup")
     }
 
     incorrectFillForm()

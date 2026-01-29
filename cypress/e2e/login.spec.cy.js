@@ -1,15 +1,17 @@
 import userData from '../fixtures/userData.json'
 import LoginPage from '../pages/loginPage.js'
 import SingInPage from '../pages/singInPage.js'
+import SideMenuPage from '../pages/sideMenuPage.js'
 
 const loginPage = new LoginPage()
 const singInPage = new SingInPage()
+const sideMenuPage = new SideMenuPage()
 
-describe('RWA tests', () => {
+describe('RWA tests - Login and new user', () => {
   it('Login - success', () => {
     loginPage.acessLoginPage()
     loginPage.signInAnyUser(userData.correctUser.userName,userData.allPassword)
-    //TODO: CONFIRM IF IN LOGGED PAGE
+    cy.get(sideMenuPage.selectorsList().sideMenu).should('be.visible')
   })
 
   it('Login invalid 01',()=>{
@@ -29,7 +31,8 @@ describe('RWA tests', () => {
     loginPage.acessLoginPage()
     loginPage.goToCreateNewUser()
     singInPage.isInCorrectPage()
-    singInPage.fillForm("João","da Silva","",userData.allPassword,userData.allPassword)
+    singInPage.fillForm("João","da Silva","vazio",userData.allPassword,userData.allPassword)
+    cy.get(singInPage.selectorsList().userName).clear() // não dá para enviar um type vazio, então tenho que apagar depois
     singInPage.incorrectFillForm()
   })
 
