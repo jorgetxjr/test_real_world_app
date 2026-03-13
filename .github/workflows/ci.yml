@@ -1,11 +1,15 @@
 name: CI
 on: [push]
 
+env:
+  # Resolve o warning de depreciação forçando o uso do Node 24 nas Actions
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true 
+
 jobs: 
   build-test: 
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repositório de Testes (Seu)
+      - name: Checkout Seu Repo de Testes
         uses: actions/checkout@v4
 
       - name: Checkout Aplicação (RWA)
@@ -17,37 +21,37 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
-          # O GitHub Actions já vem com Yarn instalado, 
-          # mas podemos habilitar o cache nativo aqui:
+          node-version: 22 # Versão estável recomendada para o RWA agora
           cache: 'yarn'
           cache-dependency-path: 'app-ui/yarn.lock'
 
-      - name: Instalar e Buildar a Aplicação (Yarn)
+      - name: Instalar e Buildar a Aplicação
         run: |
           cd app-ui
-          yarn install --frozen-lockfile
+          yarn install --frozen-lockfile --ignore-engines
           yarn build
 
-      - name: Instalar Dependências de Teste (Seu Repo)
-        run: npm install # Ou yarn install, se você usar yarn no seu repo
+      - name: Instalar Dependências de Teste (Raiz)
+        run: npm install
 
       - name: Rodar Cypress
         uses: cypress-io/github-action@v6
         with:
-          # Usamos o yarn dev apontando para a pasta da aplicação
           start: yarn dev
           working-directory: app-ui
           wait-on: 'http://localhost:3000'
-          wait-on-timeout: 180 # Aumentei o tempo pois o build do RWA é pesado
-          # Indica onde o Cypress deve procurar os testes (na raiz, fora da app-ui)
-          project: ../ 
+          wait-on-timeout: 200
+          # O segredo: Aponta para o config na raiz e garante onde os outputs vão
+          project: ../
+          browser: chrome
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
-        if: always()
+        if: always() # Garante que rode mesmo se o teste falhar
         with: 
           name: Cypress Results
+          # Usamos caminhos absolutos ou garantimos a raiz para evitar o warning de busca
           path: |
-            cypress/screenshots
-            cypress/videos
+            ${{ github.workspace }}/cypress/screenshots
+            ${{ github.workspace }}/cypress/videos
+          if-no-files-found: warn
